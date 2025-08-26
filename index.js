@@ -1,5 +1,5 @@
-import { dates } from '/utils/dates'
-import OpenAI from "openai"
+import { dates } from './utils/dates.js'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const tickersArr = []
 
@@ -38,11 +38,12 @@ const loadingArea = document.querySelector('.loading-panel')
 const apiMessage = document.getElementById('api-message')
 
 async function fetchStockData() {
+    const POLYGON_API_KEY = "tuHM1_55DcIDmUAbrh3FztL5A3TSJ8gf"
     document.querySelector('.action-panel').style.display = 'none'
     loadingArea.style.display = 'flex'
     try {
         const stockData = await Promise.all(tickersArr.map(async (ticker) => {
-            const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${dates.startDate}/${dates.endDate}?apiKey=${process.env.POLYGON_API_KEY}`
+            const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${dates.startDate}/${dates.endDate}?apiKey=${POLYGON_API_KEY}`
             const response = await fetch(url)
             const data = await response.text()
             const status = await response.status
@@ -61,32 +62,28 @@ async function fetchStockData() {
 }
 
 async function fetchReport(data) {
-    const messages = [
-        {
-            role: 'system',
-            content: 'You are a trading guru. Given data on share prices over the past 3 days, write a report of no more than 150 words describing the stocks performance and recommending whether to buy, hold or sell.'
-        },
-        {
-            role: 'user',
-            content: data
-        }
-    ]
+   try {
+    const genAI = new GoogleGenerativeAI("AIzaSyAgW3Y_zvlsv-3KSajo1XldcRL-HOo4pVs");
 
-    try {
-        const openai = new OpenAI({
-            dangerouslyAllowBrowser: true
-        })
-        const response = await openai.chat.completions.create({
-            model: 'gpt-4',
-            messages: messages
-        })
-        renderReport(response.choices[0].message.content)
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    } catch (err) {
-        console.log('Error:', err)
-        loadingArea.innerText = 'Unable to access AI. Please refresh and try again'
-    }
-   
+     const prompt = `
+        You are a trading guru. Given data on share prices over the past 3 days,
+        write a report of no more than 150 words describing the stock's performance
+        and recommending whether to buy, hold, or sell.
+
+        Here is the data:
+        ${data}
+        `;
+
+      const result = await model.generateContent(prompt);
+      const output = result.response.text();
+      renderReport(output)
+
+   } catch (error) {
+         console.log("Error:", error);
+        loadingArea.innerText = "Unable to access AI. Please refresh and try again";
+   }
 }
 
 function renderReport(output) {

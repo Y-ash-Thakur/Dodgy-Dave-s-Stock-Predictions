@@ -1,7 +1,8 @@
 import {defineConfig} from "vite"
 
 export default defineConfig({
-	plugins: [
-		
-	]
+	plugins: [],
+	define: {
+		'process.env': {}
+	}
 })

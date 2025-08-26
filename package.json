@@ -1,6 +1,7 @@
 {
-  "name": "Scrim-s05qgr9",
+  "name": "dodgy-daves-stock-predictions",
   "description": "https://scrimba.com/the-ai-engineer-path-c02v/~0c/s0gh1m34mg/head",
+  "type": "module",
   "scripts": {
     "start": "vite",
     "dev": "vite",
@@ -8,8 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "openai": "4.14.2",
     "vite": "latest"
   },
-  "devDependencies": {}
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "author": "Yash Thakur",
+  "license": "ISC"
 }
