@@ -91,7 +91,10 @@ async function fetchReport(data) {
                     `
                 }]
             }
-        ]
+        ],
+        generationConfig: {
+            
+        }
       });
       const output = result.response.text();
       renderReport(output)
